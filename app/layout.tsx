@@ -1,20 +1,19 @@
-// app/layout.tsx
-import './globals.css'
-import { Providers } from './providers'; // Importe o novo componente
+import './globals.css';
+import { RouteProvider } from '../context/RouteContext';
 
 export const metadata = {
-  title: 'Rotas Botecos BH',
-}
+  title: 'Roteiro do Boteco BH',
+  description: 'Descubra, crie rotas e explore os melhores botecos de Belo Horizonte.',
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-br">
       <body>
-        {/* Use o componente Providers aqui */}
-        <Providers>
+        <RouteProvider>
           {children}
-        </Providers>
+        </RouteProvider>
       </body>
     </html>
-  )
+  );
 }

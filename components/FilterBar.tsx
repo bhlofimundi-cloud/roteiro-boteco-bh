@@ -1,46 +1,59 @@
-// components/FilterBar.tsx
 'use client';
+import { Sun, MapPin, Heart, Flame, Loader } from 'lucide-react';
 
-import { Filter } from 'lucide-react';
-
-// Definimos os tipos de filtros que nosso app suporta
 export type ActiveFilters = {
   openNow: boolean;
+  nearby: boolean;
+  bomPraDate: boolean;
+  torresmo: boolean;
 };
 
-// O componente recebe os filtros ativos e uma função para atualizá-los
 interface FilterBarProps {
   filters: ActiveFilters;
   onFilterChange: (newFilters: ActiveFilters) => void;
+  isLoadingLocation: boolean;
 }
 
-const FilterBar = ({ filters, onFilterChange }: FilterBarProps) => {
-  const handleOpenNowClick = () => {
-    // Inverte o estado atual do filtro 'openNow'
-    onFilterChange({ ...filters, openNow: !filters.openNow });
-  };
+const filterButtons = [
+    { key: 'openNow', icon: Sun, label: 'Abertos agora' },
+    { key: 'nearby', icon: MapPin, label: 'Perto de mim' },
+    { key: 'bomPraDate', icon: Heart, label: 'Bom pra Date' },
+    { key: 'torresmo', icon: Flame, label: 'Torresmo de Responsa' },
+] as const;
 
-  return (
-    <div className="absolute top-[70px] left-1/2 z-10 w-[90vw] max-w-md -translate-x-1/2">
-      <div className="flex items-center space-x-2">
-        {/* Botão de Filtro "Abertos agora" */}
-        <button
-          onClick={handleOpenNowClick}
-          // Estilo dinâmico: muda a cor se o filtro estiver ativo
-          className={`flex items-center rounded-full px-3 py-1.5 text-sm font-semibold transition-colors
-            ${filters.openNow
-              ? 'bg-orange-500 text-white'
-              : 'bg-white text-gray-700 shadow-md hover:bg-gray-100'
-            }`}
-        >
-          <Filter size={14} className="mr-1.5" />
-          Abertos agora
-        </button>
 
-        {/* Outros botões de filtro podem ser adicionados aqui no futuro */}
-      </div>
-    </div>
-  );
-};
+export default function FilterBar({ filters, onFilterChange, isLoadingLocation }: FilterBarProps) {
+    const handleToggleFilter = (filterKey: keyof ActiveFilters) => {
+        const newFilters = { ...filters, [filterKey]: !filters[filterKey] };
+        onFilterChange(newFilters);
+    };
 
-export default FilterBar;
+    return (
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2 -mx-4 px-4 no-scrollbar">
+            {filterButtons.map(btn => {
+                const isActive = filters[btn.key];
+                const Icon = btn.icon;
+                const isLoading = btn.key === 'nearby' && isLoadingLocation;
+
+                return (
+                    <button
+                        key={btn.key}
+                        onClick={() => handleToggleFilter(btn.key)}
+                        disabled={isLoading}
+                        className={`
+                            flex items-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ease-in-out
+                            transform hover:scale-105 disabled:opacity-70 disabled:cursor-wait
+                            ${isActive
+                                ? 'bg-blue-600 text-white shadow-lg'
+                                : 'bg-white text-gray-800 shadow-md hover:bg-gray-100'
+                            }
+                        `}
+                    >
+                        {isLoading ? <Loader size={16} className="animate-spin" /> : <Icon size={16} />}
+                        <span className="ml-2">{btn.label}</span>
+                    </button>
+                )
+            })}
+        </div>
+    );
+}

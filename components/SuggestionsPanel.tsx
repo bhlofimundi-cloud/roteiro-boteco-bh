@@ -3,16 +3,14 @@
 
 import { useRouter } from 'next/navigation';
 import { useRoute } from '../context/RouteContext';
-import { getSuggestedRoutes } from '../data/botecos'; // 1. Importe a nova função
+import { getSuggestedRoutes } from '../data/botecos';
 
 const SuggestionsPanel = () => {
   const { setRoute } = useRoute();
   const router = useRouter();
   
-  // 2. Chame a função para obter as rotas reais
   const suggestedRoutes = getSuggestedRoutes();
 
-  // A interface para os botecos que a rota espera
   type BotecoRoute = { id: string; name: string; };
 
   const handleSuggestionClick = (botecos: BotecoRoute[]) => {
@@ -25,10 +23,9 @@ const SuggestionsPanel = () => {
       <div className="rounded-lg bg-white p-4 shadow-lg">
         <h2 className="mb-2 text-lg font-semibold">Rotas em Destaque</h2>
         <div className="space-y-2">
-          {/* 3. Faça o map nas rotas reais */}
           {suggestedRoutes.map((route) => (
-            // Garante que não renderizamos rotas sugeridas vazias
-            route.botecos.length > 0 && (
+            // CORREÇÃO: Verificamos se 'route.botecos' existe E se tem itens.
+            route.botecos && route.botecos.length > 0 && (
               <div
                 key={route.name}
                 onClick={() => handleSuggestionClick(route.botecos)}
