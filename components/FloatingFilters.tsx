@@ -3,8 +3,8 @@
 
 import Image from 'next/image';
 import { Sun, MapPin, Heart, Flame, Loader } from 'lucide-react';
-import { MainFilterType } from './MainFilters';
-import { ActiveFilters } from './FilterBar';
+// ▼▼▼ IMPORTS CORRIGIDOS ▼▼▼
+import { MainFilterType, ActiveFilters } from '@/types';
 
 interface FloatingFiltersProps {
   mainFilter: MainFilterType;
@@ -14,6 +14,7 @@ interface FloatingFiltersProps {
   onSecondaryFilterClick: (filter: keyof ActiveFilters) => void;
 }
 
+// ... (Resto do componente FloatingFilters, sem alterações no corpo)
 const mainFilterDefs = [
   { id: 'botecar', label: 'Festival Botecar', icon: <Image src="/images/botecar-marker.png" layout="fill" objectFit="contain" alt="Botecar" /> },
   { id: 'comida-di-buteco', label: 'Comida di Buteco', icon: <Image src="/logo-comida-di-buteco.png" layout="fill" objectFit="contain" alt="CdB" /> },

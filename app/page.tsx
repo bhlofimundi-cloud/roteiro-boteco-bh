@@ -5,9 +5,9 @@ import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
-import FloatingFilters from '../components/FloatingFilters'; // NOVO
-import { MainFilterType } from '../components/MainFilters';
-import { ActiveFilters } from '../components/FilterBar';
+import FloatingFilters from '../components/FloatingFilters';
+// ▼▼▼ IMPORTS CORRIGIDOS ▼▼▼
+import { MainFilterType, ActiveFilters } from '@/types'; // Apontando para o novo arquivo
 
 type UserLocation = { latitude: number; longitude: number; };
 
@@ -20,19 +20,18 @@ export default function Home() {
 
   const DynamicMap = useMemo(() => dynamic(() => import('../components/MapComponent'), { ssr: false }), []);
 
-  // Lógica unificada para cliques nos filtros
+  // Erros de 'any' implícito corrigidos adicionando o tipo ao parâmetro 'prev'
   const handleMainFilterClick = (filter: MainFilterType) => {
-    setMainFilter(prev => (prev === filter ? 'all' : filter));
+    setMainFilter((prev: MainFilterType) => (prev === filter ? 'all' : filter));
   };
   
   const handleSecondaryFilterClick = (filter: keyof ActiveFilters) => {
-    // Lógica para o 'Perto de Mim'
     if (filter === 'nearby' && !filters.nearby) {
       setLoadingLocation(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setUserLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
-          setFilters(prev => ({ ...prev, nearby: true }));
+          setFilters((prev: ActiveFilters) => ({ ...prev, nearby: true }));
           setLoadingLocation(false);
         },
         () => {
@@ -41,8 +40,7 @@ export default function Home() {
         }
       );
     } else {
-      // Lógica para todos os outros filtros secundários
-      setFilters(prev => ({ ...prev, [filter]: !prev[filter] }));
+      setFilters((prev: ActiveFilters) => ({ ...prev, [filter]: !prev[filter] }));
     }
   };
 
@@ -57,14 +55,10 @@ export default function Home() {
           mainFilter={mainFilter} 
         />
         
-        {/* === NOVO LAYOUT FLUTUANTE === */}
-
-        {/* 1. Barra de Busca posicionada sozinha no topo */}
         <div className="absolute top-4 left-1/2 z-10 w-11/12 max-w-lg -translate-x-1/2">
             <SearchBar onSearch={setSearchQuery} />
         </div>
         
-        {/* 2. Painel de Filtros Flutuantes */}
         <FloatingFilters 
           mainFilter={mainFilter}
           activeFilters={filters}
