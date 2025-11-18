@@ -69,4 +69,4 @@ export default function Home() {
       </main>
     </div>
   );
-}
+}// Final version for deploy.
